@@ -35,21 +35,27 @@ pico_sdk_init()
 
 # Add executable. Default name is the project name, version 0.1
 
-add_executable(CanSat 
 #
-    #CanSat_2.cpp 
-    #modules/spi.cpp 
-    #modules/i2c.cpp 
-    #modules/TX.cpp 
-    #modules/sensors.cpp 
-    #modules/rtc.cpp
-    #modules/io.cpp
+add_executable(CanSat 
+
+    CanSat_2.cpp 
+    modules/spi.cpp 
+    modules/i2c.cpp 
+    modules/TX.cpp 
+    modules/sensors.cpp 
+    modules/rtc.cpp
+    modules/io.cpp
     modules/conversions.cpp
-    #modules/buzzer.cpp
-    #hw_config.c
+    modules/buzzer.cpp
+    hw_config.c
+    )
+    
+#[[
+add_executable(CanSat 
+    modules/conversions.cpp
     RX_2.cpp
     )
-
+]]
 
 pico_set_program_name(CanSat "CanSat")
 pico_set_program_version(CanSat "0.1")

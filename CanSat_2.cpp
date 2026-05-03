@@ -1,6 +1,5 @@
 #include "GeneralHeader.hpp"
-#include <cstdio>
-#include <pico/time.h>
+
 
 
 adxl345_data_t adxl_data;
@@ -10,31 +9,32 @@ ds3231_data_t ds_data;
 bool enable_bmp = true;
 bool enable_adxl = true;
 bool enable_rtc = false;
-bool enable_lora=true;
+bool enable_lora=false;
+bool enable_buzzer = false;
+bool enable_sd = false;
+bool enable_servo=false;
 bool enable_io=true;
 
-void buzzer_on(){
-    gpio_put(PIN_BUZZER_SIG,1);
-}
+void phases(){
 
-void buzzer_off(){
-    gpio_put(PIN_BUZZER_SIG, 0);
 }
 
 int main(){
 
     //init
+    stdio_init_all();
     if (enable_io){
-        stdio_init_all();
         while (!stdio_usb_connected()){
             sleep_ms(10);
         }
     }
     else{
+        sleep_ms(2000);
         gpio_put(25,1);
-        sleep_ms(100);
+        sleep_ms(1000);
         gpio_put(25,0);
     }
+    
 
     //buzzer_on();
     
@@ -46,17 +46,21 @@ int main(){
     sleep_ms(10);
 
     lora_init();
-    if(bmp_init() != false){
-        if(enable_io){
-            printf("BMP Init Failed");
+    if(enable_bmp){
+        if(bmp_init() != false){
+            if(enable_io){
+                printf("BMP Init Failed");
+            }
+            //Handling
         }
-        //Handling
     }
-    if(adxl_init() != false){
-        if(enable_io){
-            printf("ADXL Init Failed");
+    if(enable_adxl){
+        if(adxl_init() != false){
+            if(enable_io){
+                printf("ADXL Init Failed");
+            }
+            //Handling
         }
-        //Handling
     }
 
     buzzer_run();

@@ -106,7 +106,7 @@ void set_buzzer_freq(uint slice_num, uint gpio, scales note) {
     // 125MHz / freq = div * (wrap + 1)
     // 簡易的にdivを64に固定してwrapを計算
     uint32_t clk_div = 64;
-    uint32_t wrap = (125000000 / (clk_div * note)) - 1;
+    uint32_t wrap = (150000000 / (clk_div * note)) - 1;
 
     pwm_set_clkdiv(slice_num, (float)clk_div);
     pwm_set_wrap(slice_num, wrap);
@@ -181,6 +181,7 @@ void sussex(){
     int bpm = 120;
     set_buzzer_freq(slice_num, PIN_BUZZER_SIG, D_4);
     hold_note(bpm,QUAVER);
+    set_buzzer_freq(slice_num, PIN_BUZZER_SIG, NO_NOTE);
     set_buzzer_freq(slice_num, PIN_BUZZER_SIG, D_4);
     hold_note(bpm,QUAVER);
     hold_note(bpm,SEMI_QUAVER);
@@ -212,6 +213,7 @@ void sussex(){
 
     set_buzzer_freq(slice_num, PIN_BUZZER_SIG, D_4);
     hold_note(bpm,QUAVER);
+    set_buzzer_freq(slice_num, PIN_BUZZER_SIG, NO_NOTE);
     set_buzzer_freq(slice_num, PIN_BUZZER_SIG, D_4);
     hold_note(bpm,QUAVER);
     hold_note(bpm,SEMI_QUAVER);
@@ -226,6 +228,20 @@ void sussex(){
     set_buzzer_freq(slice_num, PIN_BUZZER_SIG, C_4);
     hold_note(bpm,MINIM);
 
+    set_buzzer_freq(slice_num, PIN_BUZZER_SIG, F_4);
+    hold_note(bpm,QUAVER);
+    set_buzzer_freq(slice_num, PIN_BUZZER_SIG, E_4);
+    hold_note(bpm,QUAVER);
+    hold_note(bpm,SEMI_QUAVER);
+    set_buzzer_freq(slice_num, PIN_BUZZER_SIG, D_4);
+    hold_note(bpm,SEMI_QUAVER);
+    set_buzzer_freq(slice_num, PIN_BUZZER_SIG, E_4);
+    hold_note(bpm,CROCHET);
+    set_buzzer_freq(slice_num, PIN_BUZZER_SIG, C_4);
+    hold_note(bpm,CROCHET);
+    set_buzzer_freq(slice_num, PIN_BUZZER_SIG, F_4);
+    hold_note(bpm,MINIM);
+    hold_note(bpm,CROCHET);    
     //end
     set_buzzer_freq(slice_num, PIN_BUZZER_SIG, NO_NOTE);
 
@@ -233,9 +249,9 @@ void sussex(){
 
 
 void buzzer_run() {
-    daisy_bell();
-    misty();
-    sussex();
+    //daisy_bell();
+    //misty();
+   sussex();
 
     /*
     while (true) {

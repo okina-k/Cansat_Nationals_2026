@@ -48,8 +48,7 @@ bool ds3231_read(ds3231_data_t* data) {
     uint8_t mon  = bcd_to_dec(buffer[5] & 0x1F);
     uint16_t year = 2000 + bcd_to_dec(buffer[6]);
 
-    printf("%04u-%02u-%02u %02u:%02u:%02u\n",
-           year, mon, day, hour, min, sec);
+
     
     data -> year = year;
     data -> mon = mon;

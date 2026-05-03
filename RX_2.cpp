@@ -58,7 +58,7 @@ uint8_t read_test() {
 
 void spi_init_sx()
 {
-    spi_init(SPI_PORT, 200 * 1000);
+    spi_init(SPI_PORT, 100 * 1000);
 
     gpio_set_function(PIN_MISO, GPIO_FUNC_SPI);
     gpio_set_function(PIN_SCK, GPIO_FUNC_SPI);
@@ -135,12 +135,26 @@ void lora_init() {
     sx126x_reset(&ctx);
     sleep_ms(10);
 
+
+
     sx126x_wakeup(&ctx);
     sleep_ms(10);
-
-    sx126x_set_standby(&ctx, SX126X_STANDBY_CFG_RC);
-    printf("stdby");
+    sx_wait_busy();
+    sx126x_get_status(&ctx, &st);
+    printf("Reset Status: 0x%02X:\n");
+    sx_wait_busy();
+    sx126x_get_status(&ctx, &st);
     print_status();
+    sx_wait_busy();
+    sx126x_set_standby(&ctx, SX126X_STANDBY_CFG_XOSC);
+    sleep_ms(10);
+    //sx126x_set_standby(&ctx, SX126X_STANDBY_CFG_RC);
+    printf("stdby");
+    sx_wait_busy();
+    sx126x_get_status(&ctx, &st);
+    print_status();
+    sx_wait_busy();
+
 
 
 
@@ -150,11 +164,19 @@ void lora_init() {
 
 
     printf("cal ");
+    sx_wait_busy();
+    sx126x_get_status(&ctx, &st);
     print_status();
+    sx_wait_busy();
+
     sx126x_set_pkt_type(&ctx, SX126X_PKT_TYPE_LORA);
 
     printf("plt ");
+    sx_wait_busy();
+    sx126x_get_status(&ctx, &st);
     print_status();
+    sx_wait_busy();
+
 
 
     sx126x_set_rf_freq(&ctx, 868000000);
@@ -162,7 +184,10 @@ void lora_init() {
 
 
     printf("set frq ");
+    sx_wait_busy();
+    sx126x_get_status(&ctx, &st);
     print_status();
+    sx_wait_busy();
 
 
     sx126x_mod_params_lora_t mod = {
@@ -171,10 +196,14 @@ void lora_init() {
         .cr = SX126X_LORA_CR_4_5,
         .ldro = 0
     };
+    sx_wait_busy();
     sx126x_set_lora_mod_params(&ctx, &mod);
 
     printf("set mod param ");
+    sx_wait_busy();
+    sx126x_get_status(&ctx, &st);
     print_status();
+    sx_wait_busy();
 
     sx126x_pkt_params_lora_t pkt = {
         .preamble_len_in_symb = 16,
@@ -183,17 +212,21 @@ void lora_init() {
         .crc_is_on = true,
         .invert_iq_is_on = false
     };
+    sx_wait_busy();
     sx126x_set_lora_pkt_params(&ctx, &pkt);
 
     printf("set pkt prm ");
+    sx_wait_busy();
+    sx126x_get_status(&ctx, &st);
     print_status();
-
-
-
+    sx_wait_busy();
     sx126x_set_buffer_base_address(&ctx, 0x00, 0x80);
 
     printf("set base");
+    sx_wait_busy();
+    sx126x_get_status(&ctx, &st);
     print_status();
+    sx_wait_busy();
     sx126x_set_dio_irq_params(
         &ctx,
         SX126X_IRQ_ALL,
@@ -203,15 +236,22 @@ void lora_init() {
     );
 
     printf("set irq");
+    sx_wait_busy();
+    sx126x_get_status(&ctx, &st);
     print_status();
+    sx_wait_busy();
     sx126x_set_lora_sync_word(&ctx, 0x34);
 
     printf("set sync");
+    sx_wait_busy();
     sx126x_get_status(&ctx, &st);
     print_status();
+    sx_wait_busy();
     sx126x_set_dio2_as_rf_sw_ctrl(&ctx, false);
 
     printf("set dio2 rf");
+    sx_wait_busy();
+    sx126x_get_status(&ctx, &st);
     print_status();
     //sx126x_set_dio3_as_tcxo_ctrl(&ctx, SX126X_TCXO_CTRL_NONE, 0);
 }
@@ -461,7 +501,7 @@ int main()
         }
         sx126x_set_rx(&ctx, 0xFFFFFF);
         */
-        wait_for_packet();
+        //wait_for_packet();
         sleep_us(100);
     }
 }

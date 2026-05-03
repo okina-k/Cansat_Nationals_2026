@@ -94,3 +94,19 @@ float decode_pressure(int16_t raw) {
 float decode_accel(int16_t raw) {
     return (float)raw / SCALE_ACCEL;
 }
+
+float get_isa_alt(float pres){
+    const double P0 = 1013.25;      // 海面標準気圧 [hPa]
+    const double T0 = 288.15;       // 海面標準気温 [K]
+    const double L  = 0.0065;       // 気温減率 [K/m]
+    const double G  = 9.80665;      // 重力加速度 [m/s^2]
+    const double R  = 8.31447;      // 気体定数 [J/(mol·K)]
+    const double M  = 0.0289644;    // 空気のモル質量 [kg/mol]
+
+    float exponent = (R * L) / (G * M);
+    
+    // 高度の計算式
+    float altitude = (T0 / L) * (1.0 - pow(pres / P0, exponent));
+    
+    return altitude;
+}

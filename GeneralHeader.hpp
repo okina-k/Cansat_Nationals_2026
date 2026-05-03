@@ -1,3 +1,5 @@
+#pragma once
+
 #include <pico/time.h>
 #include <stdio.h>
 #include <string.h>
@@ -10,6 +12,9 @@
 #include "hardware/pwm.h"
 #include <cstdint>
 #include <time.h>
+#include <cstdio>
+#include <hardware/clocks.h>
+#include <pico/time.h>
 
 extern "C" {
     #include "adxl345/src/driver_adxl345.h"

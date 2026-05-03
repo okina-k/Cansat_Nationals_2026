@@ -1,4 +1,5 @@
 #include "../GeneralHeader.hpp"
+#include <pico/time.h>
 
 #define DATA_INVALID -32768
 
@@ -116,7 +117,6 @@ void lora_send() {
 
     sx126x_write_buffer(&ctx, 0x00, (uint8_t *)&lora_data, sizeof(lora_data));
 
-    // ★重要：ここ追加
     sx126x_get_status(&ctx, NULL);
     sleep_us(200);
 
@@ -126,9 +126,11 @@ void lora_send() {
     gpio_put(PIN_LAMBDA_TX, 1);
     gpio_put(PIN_LAMBDA_RX, 0);
 
-    printf("before TX\n");
+    //printf("before TX\n");
+    sleep_ms(10);
     sx126x_set_tx(&ctx, 3000);
-    printf("after TX\n");
+    //printf("after TX\n");
+    sleep_ms(10);
     
 }
 
@@ -143,6 +145,7 @@ void lora_pack(bmp280_data_t* bmp_data, adxl345_data_t* adxl_data, ds3231_data_t
     lora_data.unix_time = 0;
     lora_data.servo_status = 255;
     lora_data.status = 255;
+
 
 
 

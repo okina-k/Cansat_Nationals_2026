@@ -47,8 +47,10 @@ add_executable(CanSat
     modules/io.cpp
     modules/conversions.cpp
     modules/buzzer.cpp
+    modules/servo.cpp 
     hw_config.c
     )
+   
     
 #[[
 add_executable(CanSat 

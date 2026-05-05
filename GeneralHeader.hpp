@@ -1,5 +1,6 @@
 #pragma once
 
+#include <hardware/regs/clocks.h>
 #include <pico/time.h>
 #include <stdio.h>
 #include <string.h>
@@ -50,7 +51,7 @@ extern "C" {
 
 //Define PWM/On_Off Pins
 #define PIN_SERVO_ANT 21
-#define PIN_SERVO_REV 20
+#define PIN_SERVO_REV 15
 #define PIN_BUZZER_SIG 22
 #define PIN_LED_STDBY 26
 
@@ -62,7 +63,7 @@ extern "C" {
 #define PIN_LAMBDA_RX 12
 #define PIN_LAMBDA_TX 13
 #define PIN_LAMBDA_DIO1 14
-#define PIN_LAMBDA_DIO2 15
+//#define PIN_LAMBDA_DIO2 15
 #define PIN_LAMBDA_DIO3 16
 #define PIN_LAMBDA_BUSY 17
 
@@ -110,6 +111,17 @@ typedef struct __attribute__((packed)){
     uint8_t status;
 } lora_payload_t;
 
+struct enable_flag{
+    bool enable_bmp;
+    bool enable_adxl;
+    bool enable_rtc;
+    bool enable_lora;
+    bool enable_buzzer;
+    bool enable_sd;
+    bool enable_servo;
+    bool enable_io;
+};
+
 enum io_choice{
     ADXL,
     BMP,
@@ -122,6 +134,19 @@ enum accel_choice{
     Y,
     Z
 };
+
+enum servo_dir{
+    CLOCK,
+    CTRCLOCK
+}
+
+enum phase{
+    PRE_LAUNCH,
+    LAUNCH,
+    SEPARATION,
+    DESCENT,
+    BEACON
+}
 //Variables to include in all files
 
 
@@ -136,16 +161,24 @@ void buzzer_run();
 void lora_init();
 bool bmp_init();
 bool adxl_init();
+
 bool bmp_read(bmp280_data_t* data);
 bool adxl_read(adxl345_data_t* data);
 bool ds3231_read(ds3231_data_t* data);
+
 void output_run(bmp280_data_t* bmp_data, adxl345_data_t* adxl_data, ds3231_data_t* ds_data, io_choice choice);
+
 void lora_pack(bmp280_data_t* bmp_data, adxl345_data_t* adxl_data, ds3231_data_t* ds_data, bool enable_bmp, bool enable_adxl, bool enable_rtc);
+
 uint32_t convert_to_unix_time(ds3231_data_t* data);
 int16_t encode_temp(bmp280_data_t* data);
 int16_t encode_pressure(bmp280_data_t* data);
 int16_t encode_accel(adxl345_data_t* data, accel_choice choice);
 float get_combined_acc(adxl345_data_t* data);
+
 float decode_temperature(int16_t raw_val);
 float decode_pressure(int16_t raw);
 float decode_accel(int16_t raw);
+
+void servo_init();
+void servo_run(int time, servo_dir dir);

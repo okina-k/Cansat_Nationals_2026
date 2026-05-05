@@ -501,7 +501,7 @@ int main()
         }
         sx126x_set_rx(&ctx, 0xFFFFFF);
         */
-        //wait_for_packet();
+        wait_for_packet();
         sleep_us(100);
     }
 }

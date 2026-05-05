@@ -247,10 +247,62 @@ void sussex(){
 
 }
 
+void imperial_march(){
+    int bpm=104;
+
+    set_buzzer_freq(bpm,PIN_BUZZER_SIG, A_4);
+    hold_note(bpm, CROCHET);
+    set_buzzer_freq(slice_num, PIN_BUZZER_SIG, NO_NOTE);
+    set_buzzer_freq(bpm,PIN_BUZZER_SIG, A_4);
+    hold_note(bpm, CROCHET);
+    set_buzzer_freq(slice_num, PIN_BUZZER_SIG, NO_NOTE);
+    set_buzzer_freq(bpm,PIN_BUZZER_SIG, A_4);
+    hold_note(bpm, CROCHET);
+    set_buzzer_freq(slice_num, PIN_BUZZER_SIG, NO_NOTE);
+    set_buzzer_freq(bpm,PIN_BUZZER_SIG, F_4);
+    hold_note(bpm, QUAVER);
+    set_buzzer_freq(bpm,PIN_BUZZER_SIG, C_5);
+    hold_note(bpm, QUAVER);
+    set_buzzer_freq(bpm,PIN_BUZZER_SIG, A_4);
+    hold_note(bpm, CROCHET);
+    set_buzzer_freq(bpm,PIN_BUZZER_SIG, F_4);
+    hold_note(bpm, QUAVER);
+    set_buzzer_freq(bpm,PIN_BUZZER_SIG, C_5);
+    hold_note(bpm, QUAVER);
+    set_buzzer_freq(bpm,PIN_BUZZER_SIG, A_4);
+    hold_note(bpm, MINIM);
+
+    set_buzzer_freq(bpm,PIN_BUZZER_SIG, E_5);
+    hold_note(bpm, CROCHET);
+    set_buzzer_freq(bpm,PIN_BUZZER_SIG, E_5);
+    hold_note(bpm, CROCHET);
+    set_buzzer_freq(bpm,PIN_BUZZER_SIG, E_5);
+    hold_note(bpm, CROCHET);
+    set_buzzer_freq(bpm,PIN_BUZZER_SIG, F_5);
+    hold_note(bpm, QUAVER);
+    set_buzzer_freq(bpm,PIN_BUZZER_SIG, C_5);
+    hold_note(bpm, QUAVER);
+    set_buzzer_freq(bpm,PIN_BUZZER_SIG, G_S_5);
+    hold_note(bpm, CROCHET);
+    set_buzzer_freq(bpm,PIN_BUZZER_SIG, F_5);
+    hold_note(bpm, QUAVER);
+    set_buzzer_freq(bpm,PIN_BUZZER_SIG, C_5);
+    hold_note(bpm, QUAVER);
+    set_buzzer_freq(bpm,PIN_BUZZER_SIG, A_4);
+    hold_note(bpm, MINIM);
+
+    set_buzzer_freq(slice_num, PIN_BUZZER_SIG, NO_NOTE);
+}
+
+void foundation_hymn(){
+
+}
+
 
 void buzzer_run() {
-    //daisy_bell();
+    daisy_bell();
     //misty();
+    //imperial_march();
    sussex();
 
     /*

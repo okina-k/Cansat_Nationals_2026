@@ -1,9 +1,11 @@
 #include "../GeneralHeader.hpp"
+#include <cstdio>
 #include <pico/time.h>
 
 #define DATA_INVALID -32768
 
 lora_payload_t lora_data;
+
 
 sx126x_pico_context_t ctx = {
     .spi = spi0,
@@ -83,7 +85,7 @@ void lora_init() {
     sx126x_pkt_params_lora_t pkt = {
         .preamble_len_in_symb = 16,
         .header_type = SX126X_LORA_PKT_EXPLICIT,
-        .pld_len_in_bytes = 17,
+        .pld_len_in_bytes = sizeof(lora_payload_t),
         .crc_is_on = true,
         .invert_iq_is_on = false
     };
@@ -142,9 +144,10 @@ void lora_pack(bmp280_data_t* bmp_data, adxl345_data_t* adxl_data, ds3231_data_t
     lora_data.temp = DATA_INVALID;
     lora_data.pres = DATA_INVALID;
     lora_data.phase = 255;
-    lora_data.unix_time = 0;
+    lora_data.unix_time =to_ms_since_boot(get_absolute_time());;
     lora_data.servo_status = 255;
     lora_data.status = 255;
+    lora_data.callib_pres = DATA_INVALID;
 
 
 
@@ -156,6 +159,11 @@ void lora_pack(bmp280_data_t* bmp_data, adxl345_data_t* adxl_data, ds3231_data_t
     int16_t x_w;
     int16_t y_w;
     int16_t z_w;
+    uint16_t pres_cal_w;
+
+    pres_cal_w = encode_pressure_callib(callib_pres_t);
+
+    lora_data.callib_pres = pres_cal_w;
 
     //write to packet
     if (enable_bmp){
@@ -164,6 +172,8 @@ void lora_pack(bmp280_data_t* bmp_data, adxl345_data_t* adxl_data, ds3231_data_t
 
         lora_data.temp = temp_w;
         lora_data.pres = pres_w;
+
+        
 
     }
     if(enable_adxl){

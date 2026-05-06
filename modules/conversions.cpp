@@ -42,16 +42,28 @@ int16_t encode_temp(bmp280_data_t* data){
     return (int16_t)(temp_c * SCALE_TEMP + (temp_c >= 0 ? 0.5f : -0.5f));
 }
 
-int16_t encode_pressure(bmp280_data_t* data) {
+uint16_t encode_pressure(bmp280_data_t* data) {
     float pressure_c;
 
     pressure_c = data -> pressure;
 
     pressure_c = pressure_c/100.0f;
 
-    return (int16_t)(pressure_c * SCALE_PRESSURE + (pressure_c >= 0 ? 0.5f : -0.5f));
+    return (uint16_t)(pressure_c * SCALE_PRESSURE + (pressure_c >= 0 ? 0.5f : -0.5f));
 }
 
+uint16_t encode_pressure_callib(float pressure_pa) {
+    // 1. Pa を hPa に変換 (101325.0 -> 1013.25)
+    float pressure_hpa = pressure_pa / 100.0f;
+
+    // 2. 小数点第1位まで保持するために10倍する (1013.25 -> 10132.5)
+    // SCALE_PRESSURE が 10 の場合
+    float scaled = pressure_hpa * SCALE_PRESSURE;
+
+    // 3. 四捨五入して uint16_t にキャスト
+    // 10132.5 -> 10133 (これなら 65535 以下に収まる)
+    return (uint16_t)(scaled + (scaled >= 0 ? 0.5f : -0.5f));
+}
 int16_t encode_accel(adxl345_data_t* data, accel_choice choice ) {
     float acc_c;
 
@@ -95,18 +107,25 @@ float decode_accel(int16_t raw) {
     return (float)raw / SCALE_ACCEL;
 }
 
-float get_isa_alt(float pres){
-    const double P0 = 1013.25;      // 海面標準気圧 [hPa]
-    const double T0 = 288.15;       // 海面標準気温 [K]
-    const double L  = 0.0065;       // 気温減率 [K/m]
-    const double G  = 9.80665;      // 重力加速度 [m/s^2]
-    const double R  = 8.31447;      // 気体定数 [J/(mol·K)]
-    const double M  = 0.0289644;    // 空気のモル質量 [kg/mol]
+float get_isa_alt(float pres_hpa) {
+    // callib_pres_t が Pa 単位なら 100.0 で割って hPa にする
+    // すでに hPa ならそのまま使う
+    double P0 = (double)callib_pres_t; 
+    if (P0 > 5000.0) P0 /= 100.0; // Pa単位(10万)ならhPa(1000)に変換
 
-    float exponent = (R * L) / (G * M);
+    const double T0 = 288.15;    // [K]
+    const double L  = 0.0065;    // [K/m]
+    const double G  = 9.80665;   // [m/s^2]
+    const double R_air = 287.052; // [J/kg・K] 空気の比気体定数
+
+    // 指数部分: (R_air * L) / G ≒ 0.190263
+    double exponent = (R_air * L) / G;
     
-    // 高度の計算式
-    float altitude = (T0 / L) * (1.0 - pow(pres / P0, exponent));
+    // powの中身も hPa 単位で揃える
+    double p = (double)pres_hpa;
+    if (p > 5000.0) p /= 100.0; 
+
+    double altitude = (T0 / L) * (1.0 - pow(p / P0, exponent));
     
-    return altitude;
+    return (float)altitude;
 }

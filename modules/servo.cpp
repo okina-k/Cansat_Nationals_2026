@@ -20,7 +20,6 @@ void set_servo_pulse(float pulse_width_us) {
 }
 
 void servo_run(int time, servo_dir dir){
-    while (true) {
         if(dir==CLOCK){
             set_servo_pulse(1420);
         }
@@ -29,5 +28,5 @@ void servo_run(int time, servo_dir dir){
         }
         sleep_ms(time);
         set_servo_pulse(1500);
-    }
+    
 }

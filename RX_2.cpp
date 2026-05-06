@@ -1,5 +1,6 @@
 #include <hardware/gpio.h>
 #include <pico/time.h>
+#include <stdint.h>
 #include <stdio.h>
 #include <string.h>
 #include "pico/stdlib.h"
@@ -11,6 +12,7 @@ extern "C" {
 }
 
 lora_payload_t rx_data;
+float callib_pres_t = 1013.25f;
 uint8_t rx_buf[sizeof(lora_payload_t)];
 
 sx126x_pico_context_t ctx = {
@@ -52,7 +54,7 @@ uint8_t read_test() {
     spi_write_blocking(SPI_PORT, &dummy, 1); // ダミー読み出し
     spi_read_blocking(SPI_PORT, 0x00, &val, 1); // 値の読み出し
     gpio_put(PIN_LAMBDA_CS, 1);
-    printf("%d\n",val);
+    //printf("%d\n",val);
     return val;
 }
 
@@ -208,7 +210,7 @@ void lora_init() {
     sx126x_pkt_params_lora_t pkt = {
         .preamble_len_in_symb = 16,
         .header_type = SX126X_LORA_PKT_EXPLICIT,
-        .pld_len_in_bytes = 17, 
+        .pld_len_in_bytes = sizeof(lora_payload_t), 
         .crc_is_on = true,
         .invert_iq_is_on = false
     };
@@ -267,6 +269,7 @@ void data_io(){
     uint8_t servo_status;
     uint8_t phase;
     uint8_t status;
+    uint16_t pres_callib;
 
     unix_time = rx_data.unix_time;
     temp_raw = rx_data.temp;
@@ -277,30 +280,44 @@ void data_io(){
     servo_status = rx_data.servo_status;
     phase = rx_data.phase;
     status = rx_data.status;
+    pres_callib = rx_data.callib_pres;
 
+    /*
     printf("Temp_Raw: %d\n",temp_raw);
     printf("Pres_Raw: %d\n",pres_raw);
     printf("AccX_Raw: %d\n",accX_raw);
     printf("AccY_Raw: %d\n",accY_raw);
     printf("AccZ_Raw: %d\n",accZ_raw);
+    */
+
 
     float temp;
     float pres;
     float accX;
     float accY;
     float accZ;
+    float combAcc;
+    float alt;
 
     temp = decode_temperature(temp_raw);
     pres = decode_pressure(pres_raw);
     accX = decode_accel(accX_raw);
     accY = decode_accel(accY_raw);
     accZ = decode_accel(accZ_raw);
+    alt = get_isa_alt(pres);
 
-    printf("Temp: %f\n",temp);
-    printf("Pres: %f\n",pres);
-    printf("AccX: %f\n",accX);
-    printf("AccY: %f\n",accY);
-    printf("AccZ: %f\n",accZ);
+    printf("%d,",unix_time);
+    callib_pres_t=decode_pressure(pres_callib);
+    alt = get_isa_alt(pres);
+    printf("%f,",pres);
+    printf("%f,",alt);
+    printf("%f,",temp-14.0f);//+5
+    printf("%f,",accX);
+    printf("%f,",accY);
+    printf("%f,",accZ);
+    combAcc = sqrt(accX*accX+accY*accY+accZ*accZ);
+    printf("%f,",combAcc);
+    printf("\n");
 }
 
 
@@ -325,11 +342,12 @@ void process_rx_data(uint16_t irq_status) {
 
     data_io();
     //Hex read raw
+    /*
     printf("Hex Data: ");
     for(int i = 0; i < rx_status.pld_len_in_bytes; i++) {
         printf("%02X ", rx_buf[i]);
     }
-    printf("\n");
+    printf("\n");*/
 
 
 }
@@ -418,7 +436,7 @@ void start_rx() {
     // --- ここで確認 ---
     sx126x_chip_status_t st;
     sx126x_get_status(&ctx, &st);
-    printf("RX MODE CHECK: mode=%d (Expected 5), cmd=%d\n", st.chip_mode, st.cmd_status);
+    //printf("RX MODE CHECK: mode=%d (Expected 5), cmd=%d\n", st.chip_mode, st.cmd_status);
 }
 
 // メインループや受信待機関数内
@@ -434,13 +452,13 @@ void wait_for_packet() {
         */
 
     if (irq_status & SX126X_IRQ_RX_DONE) {
-        printf("RX DONE！\n");
+        //printf("RX DONE！\n");
         process_rx_data(irq_status);
         sx126x_clear_irq_status(&ctx, irq_status );
         start_rx();
     } 
     else if (irq_status & SX126X_IRQ_TIMEOUT) {
-        printf("Timeout\n");
+        //printf("Timeout\n");
         // タイムアウトしたら再開するため、必要ならここで再セット
         sx126x_clear_irq_status(&ctx, irq_status );
         start_rx();
@@ -466,6 +484,15 @@ int main()
     gpio_set_irq_enabled(PIN_LAMBDA_DIO1, GPIO_IRQ_EDGE_RISE, true);
     gpio_set_irq_callback(&dio1_irq_handler);
     irq_set_enabled(IO_IRQ_BANK0, true);
+    printf("Time,");
+    printf("Pres,");
+    printf("Alt,");
+    printf("Temp,");
+    printf("AccX,");
+    printf("AccY,");
+    printf("AccZ.");
+    printf("combAcc");
+    printf("\n");
 
     read_test();
     while (true) {

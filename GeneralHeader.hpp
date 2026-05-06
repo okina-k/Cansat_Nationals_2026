@@ -50,8 +50,8 @@ extern "C" {
 #define PIN_SD_CS 18
 
 //Define PWM/On_Off Pins
-#define PIN_SERVO_ANT 21
-#define PIN_SERVO_REV 15
+#define PIN_SERVO_ANT 20
+#define PIN_SERVO_REV 21
 #define PIN_BUZZER_SIG 22
 #define PIN_LED_STDBY 26
 
@@ -106,6 +106,7 @@ typedef struct __attribute__((packed)){
     int16_t accX;
     int16_t accY;
     int16_t accZ;
+    uint16_t callib_pres;
     uint8_t servo_status;
     uint8_t phase;
     uint8_t status;
@@ -138,7 +139,7 @@ enum accel_choice{
 enum servo_dir{
     CLOCK,
     CTRCLOCK
-}
+};
 
 enum phase{
     PRE_LAUNCH,
@@ -146,10 +147,10 @@ enum phase{
     SEPARATION,
     DESCENT,
     BEACON
-}
+};
 //Variables to include in all files
 
-
+extern float callib_pres_t;
 
 
 //Functions to include in all files
@@ -172,7 +173,8 @@ void lora_pack(bmp280_data_t* bmp_data, adxl345_data_t* adxl_data, ds3231_data_t
 
 uint32_t convert_to_unix_time(ds3231_data_t* data);
 int16_t encode_temp(bmp280_data_t* data);
-int16_t encode_pressure(bmp280_data_t* data);
+uint16_t encode_pressure(bmp280_data_t* data);
+uint16_t encode_pressure_callib(float pressure_c);
 int16_t encode_accel(adxl345_data_t* data, accel_choice choice);
 float get_combined_acc(adxl345_data_t* data);
 
@@ -182,3 +184,6 @@ float decode_accel(int16_t raw);
 
 void servo_init();
 void servo_run(int time, servo_dir dir);
+
+bool transition_0(bmp280_data_t* bmp_data, adxl345_data_t* adxl_data);
+float get_isa_alt(float pres);

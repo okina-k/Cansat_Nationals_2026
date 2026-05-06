@@ -49,15 +49,15 @@ add_executable(CanSat
     modules/buzzer.cpp
     modules/servo.cpp 
     hw_config.c
+    modules/phase.cpp
     )
    
-    
 #[[
 add_executable(CanSat 
     modules/conversions.cpp
-    RX_2.cpp
-    )
-]]
+    RX_ 2.cpp
+    )]]
+
 
 pico_set_program_name(CanSat "CanSat")
 pico_set_program_version(CanSat "0.1")

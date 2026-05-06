@@ -295,7 +295,45 @@ void imperial_march(){
 }
 
 void foundation_hymn(){
+    int bpm = 100;
+    set_buzzer_freq(bpm, PIN_BUZZER_SIG, A_4);
+    hold_note(bpm, MINIM);
+    set_buzzer_freq(bpm, PIN_BUZZER_SIG, A_4);
+    hold_note(bpm, MINIM);
+    set_buzzer_freq(bpm, PIN_BUZZER_SIG, F_S_4);
+    hold_note(bpm, MINIM);
+    set_buzzer_freq(bpm, PIN_BUZZER_SIG, A_4);
+    hold_note(bpm, MINIM);
+    set_buzzer_freq(bpm, PIN_BUZZER_SIG, D_5);
+    hold_note(bpm, MINIM);
+    set_buzzer_freq(bpm, PIN_BUZZER_SIG, C_S_5);
+    hold_note(bpm, CROCHET);
+    set_buzzer_freq(bpm, PIN_BUZZER_SIG, B_4);
+    hold_note(bpm, CROCHET);
+    set_buzzer_freq(bpm, PIN_BUZZER_SIG, A_4);
+    hold_note(bpm, MINIM);
+    set_buzzer_freq(bpm, PIN_BUZZER_SIG, G_S_4);
+    hold_note(bpm, MINIM);
 
+    set_buzzer_freq(bpm, PIN_BUZZER_SIG, A_4);
+    hold_note(bpm, MINIM);
+    set_buzzer_freq(bpm, PIN_BUZZER_SIG, E_4);
+    hold_note(bpm, MINIM);
+    set_buzzer_freq(bpm, PIN_BUZZER_SIG, F_S_4);
+    hold_note(bpm, CROCHET);
+    set_buzzer_freq(bpm, PIN_BUZZER_SIG, G_S_4);
+    hold_note(bpm, CROCHET);
+    set_buzzer_freq(bpm, PIN_BUZZER_SIG, A_4);
+    hold_note(bpm, MINIM);
+
+    set_buzzer_freq(bpm, PIN_BUZZER_SIG, B_4);
+    hold_note(bpm, MINIM);
+    set_buzzer_freq(bpm, PIN_BUZZER_SIG, C_S_4);
+    hold_note(bpm, CROCHET);
+    set_buzzer_freq(bpm, PIN_BUZZER_SIG, D_4);
+    hold_note(bpm, CROCHET);
+    set_buzzer_freq(bpm, PIN_BUZZER_SIG, C_S_4);
+    hold_note(bpm, MINIM);
 }
 
 
